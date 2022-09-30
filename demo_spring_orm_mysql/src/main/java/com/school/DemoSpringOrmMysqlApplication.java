@@ -1,5 +1,7 @@
 package com.school;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +26,40 @@ public class DemoSpringOrmMysqlApplication implements CommandLineRunner{
 	//deleteStudent();
 	   //displayStudent();
 	
-	updateStudent();
+	//updateStudent();
+	//displayAllStudents();
+	//displayAllStudentsNameAndMarks();	
+	//getAllMarks();
+	getAllNames();
+	}
+
+	private void getAllNames() {
+		List<String> names=studentService.getNames();
+		names.forEach(name->System.out.println(name));
+		
+	}
+
+	private void getAllMarks() {
+		List<Integer> marks=studentService.getMarks();
+	marks.forEach(score->System.out.println(score));
+		
+	}
+
+	private void displayAllStudentsNameAndMarks() {
+		List<Object[]> objects=studentService.getStudentsNameAndMarks();
+		objects.forEach(student->{
+			System.out.println(student[0]+"\t"+student[1]);
+			
+		});
+		
+	}
+
+	private void displayAllStudents() {
+		List<StudentDTO> studentDTOList=studentService.getStudents();
+		studentDTOList.forEach(studentDTO->{
+			System.out.println(studentDTO.getRoll()+"\t"+studentDTO.getName()+"\t"+studentDTO.getMarks());
+			
+		});
 		
 	}
 

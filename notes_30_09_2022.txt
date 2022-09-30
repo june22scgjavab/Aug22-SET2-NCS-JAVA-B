@@ -120,4 +120,150 @@ appender.console.layout.pattern=%m%n
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 	</dependencies>
------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------
+1. For us the ORM being used is Hibernate.
+2. We add the starter dependencies as mysql-connector-java and  spring-starter-data-jpa. 
+3. We need to update application.properties for database connectivity.
+   The application.properties is within resource folder.
+-----------------------------------------------------------------------------------------------------------------------------------
+data.sql
+
+drop database if exists school_db;
+create database school_db;
+use school_db;
+create table student(
+   roll int primary key,
+   name varchar(20),
+   marks int
+);
+insert into student values(1,'Rohit',90);
+commit;
+select * from student;
+---------------------------------------------------------------------------------------------------------------------------------
+We create the packages:-
+ com.school.service;
+ com.school.repository;
+ com.school.dto;
+ com.school.entity;
+  
+ Right click on com.school and start creating the packages.
+FORMATTING THE CODE WHICH WE ARE WRITING IN THE EDITOR ctrl+shift+f.
+
+  
+  @Transactional
+  public class StudentServiceImpl implements StudentService {
+  
+    @Autowired
+   private StudentRepository studentRepository;  
+     // Either both the methods namely update and delete should happen but if one
+     // fails , rollback should happen
+    public void update(){
+        studentRepository.update();
+        studentRepository.delete();
+     }
+
+  }
+// In the above calse update and delete are getting executed under a single transaction
+// maybe that we want. 
+    
+  public class StudentRepositoryImpl implements StudentRepository{
+
+     // update will be taking place in one transaction
+     // delete will be in another new transaction
+    public void update(){}
+    public void delete(){}
+  }
+}
+
+
+
+
+
+
+
+  public class StudentServiceImpl implements StudentService {
+  
+    @Autowired
+   private StudentRepository studentRepository;  
+     // Either both the methods namely update and delete should happen but if one
+     // fails , rollback should happen
+    public void update(){
+        studentRepository.update();
+        studentRepository.delete();
+     }
+
+  }
+
+    
+  @Transactional
+  public class StudentRepositoryImpl implements StudentRepository{
+
+     // update will be taking place in one transaction
+     // delete will be in another new transaction
+    public void update(){}
+    public void delete(){}
+  }
+}
+
+@PersistenceContext should be preferred over @Autowired for injecting EntityManager
+
+Why should @PersistenceContext should be used?
+
+When multiple clients call the application, each call creates a unique thread.
+
+Persistence Context is specifically designed so as to create unique EntityManager for every thread whereas Autowired creates the same Entity Manager for all the threads. This can become a design flaw as multiple clients may access the same entity.
+
+Thus, as a best practice, always use @PersistenceContext for injecting the EntityManager.
+
+
+
+Java Persistence Query Language (JPQL). These queries are defined using entity classes and its attributes instead of tables and columns. This makes it easy for Java developers to use it. But since database uses SQL, JPA implementations translate the JPQL query into SQL using query translator.
+
+
+Query interface
+
+To create and execute JPQL queries, JPA provides Query interface. An object of Query interface is created through EntityManager interface using createQuery method as follows:
+
+Query query = entityManager.createQuery("SELECT c FROM Customer c");
+where SELECT c from CustomerEntity c is a JPQL query.
+
+This interface provides following methods to execute a query:
+
+List getResultList() : This method executes select queries and returns a List of results. It throws IllegalStateException if called for update and delete queries.
+
+Integer executeUpdate() : This method executes update and delete queries. It returns the number of rows updated or deleted. It throws IllegalStateException if called for select queries.
+
+Object getSingleResult() : This method executes select query which returns a single result. If no result available it throws NoResultException. It throws NonUniqueResultException if query returns more than one results and IllegalStateException if called for update and delete queries.
+
+
+Query query = entityManager.createQuery("SELECT c FROM Customer c");
+              query.getResultList();
+  // In place of select if we write update or delete , it will throw IllegalStateException
+
+Query query = entityManager.createQuery("SELECT c FROM Customer c");
+              query.getSingleResult();  // The exception NonUniqueResultException will be thrown as multiple records are returned from               the table.
+
+-------------------------------------------------------------------------------------------------------------------
+
+ Query query=entityManager.createQuery("select s from Student s where s.roll=?1 and s.name=?2");
+   int roll=100;
+   String name="Sunil";
+   query.setParameter(1,roll);
+   query.setParameter(2,name);
+   List<Student> studentList=query.getResultList();
+------------------------------------------------------------------------------------------------------------------
+
+
+ Query query=entityManager.createQuery("select s from Student s where s.roll=:rol and s.name=:nam");
+   int roll=100;
+   String name="Sunil";
+   query.setParameter("rol",roll);
+   query.setParameter("nam",name);
+   List<Student> studentList=query.getResultList();
+ ---------------------------------------------------------------------------------------------------------------------  
+
+  weekend_demo_codes_1_10_2022_to_2_10_2022 
+
+
+
+

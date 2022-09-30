@@ -1,7 +1,11 @@
 package com.school.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
@@ -47,6 +51,42 @@ public class StudentRepositoryImpl implements StudentRepository {
 		Student student=entityManager.find(Student.class, id);
 		entityManager.remove(student);
 		return student.getRoll();
+	}
+
+	@Override
+	public List<StudentDTO> getStudents() {
+		Query query=entityManager.createQuery("select s from Student s");
+		List<Student> listStudent=query.getResultList(); 
+		List<StudentDTO> studentDTOList=new ArrayList<>();
+	listStudent.forEach(student->{
+		  StudentDTO studentDTO=new StudentDTO();
+		  studentDTO.setRoll(student.getRoll());
+		  studentDTO.setName(student.getName());
+		  studentDTO.setMarks(student.getMarks());
+		  studentDTOList.add(studentDTO);
+	});
+		return studentDTOList;
+	}
+
+	@Override
+	public List<Object[]> getStudentsNameAndMarks() {
+		Query query=entityManager.createQuery("select s.name,s.marks from Student s");
+		List<Object[]> objects=query.getResultList();
+		return objects;
+	}
+
+	@Override
+	public List<Integer> getMarks() {
+		Query query=entityManager.createQuery("select s.marks from Student s");
+		List<Integer> marks=query.getResultList();
+		return marks;
+	}
+
+	@Override
+	public List<String> getNames() {
+		Query query=entityManager.createQuery("select upper(s.name) from Student s");
+		List<String> names=query.getResultList();
+		return names;
 	}
 
 }

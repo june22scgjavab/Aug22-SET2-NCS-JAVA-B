@@ -1,5 +1,7 @@
 package com.school.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private StudentRepository studentRepository;
 	@Override
+	
 	public void addStudent(StudentDTO studentDTO) {
 		studentRepository.addStudent(studentDTO);
 
@@ -37,6 +40,30 @@ public class StudentServiceImpl implements StudentService {
 	public int deleteStudent(int roll) {
 		int rollNumber=studentRepository.deleteStudent(roll);
 		return rollNumber;
+	}
+
+	@Override
+	public List<StudentDTO> getStudents() {
+		
+		return studentRepository.getStudents();
+	}
+
+	@Override
+	public List<Object[]> getStudentsNameAndMarks() {
+		
+		return studentRepository.getStudentsNameAndMarks();
+	}
+
+	@Override
+	public List<Integer> getMarks() {
+		
+		return studentRepository.getMarks();
+	}
+
+	@Override
+	public List<String> getNames() {
+		
+		return studentRepository.getNames();
 	}
 
 }

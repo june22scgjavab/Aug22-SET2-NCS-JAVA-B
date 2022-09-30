@@ -1,0 +1,123 @@
+Imports Required
+----------------------------------------------------------------------------------------------------------------------------
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.Environment;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+--------------------------------------------------------------------------------------------------------------------------------
+@SpringBootApplication
+@Autowired
+@Entity
+@Id
+@Enumerated(value=EnumType.STRING)
+@Repository
+@Service
+@Transactional
+@AfterThrowing(pointcut = "execution(* com.infy.service.*Impl.*(..))", throwing = "exception")
+-----------------------------------------------------------------------------------------------------------------
+public static final Log LOGGER = LogFactory.getLog(LoggingAspect.class);
+-------------------------------------------------------------------------------------------------------
+UserInterface.UPDATE_SUCCESS=Customer details successfully updated.
+Service.CUSTOMER_ALREADY_EXISTS=Customer already present. Add customer with different details.
+UserInterface.INSERT_SUCCESS=Customer details added successfully.
+
+Service.CUSTOMER_UNAVAILABLE=Customer details not found. Give valid customer id.
+# MySQL settings
+#Change these settings according to database you are using
+spring.datasource.url=jdbc:mysql://localhost:3306/customer_db
+spring.datasource.username=root
+
+#If MySQL installation is password proctored,then use below property to set password
+spring.datasource.password=password@123
+
+#JPA settings
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+----------------------------------------------------------------------------------------------------------------------
+#Name of the Properties file
+name=LoggerConfigFile
+
+#Declaring logger for business logic
+logger.file.name=com.infy.utility
+logger.file.level=DEBUG
+logger.file.appenderRef.file.ref=LoggerAppender
+logger.file.additivity=false
+
+#Declaring logger for business console
+logger.console.name=com.infy
+logger.console.level=INFO
+logger.console.appenderRef.file.ref=ConsoleAppender
+logger.console.additivity=false
+
+# File Appender
+appender.file.name=LoggerAppender
+appender.file.type=File
+appender.file.fileName=log/ErrorLog.log
+#Logging Pattern
+appender.file.layout.type=PatternLayout
+appender.file.layout.pattern=%d{dd-MMM-yyyy HH:mm:ss} %level - %m%n
+
+
+# Console Appender
+appender.console.name=ConsoleAppender
+appender.console.type=Console
+#Logging Pattern for console
+appender.console.layout.type=PatternLayout
+appender.console.layout.pattern=%m%n
+
+-------------------------------------------------------------------------------------------------------------------------------
+<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+	</dependencies>
+-----------------------------------------------------------------------------------------------------------------------------
